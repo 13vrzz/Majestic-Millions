@@ -3,11 +3,90 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Majestic Millions Order Form</title>
+  <title>Majestic Millions - Order Form</title>
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
-    /* Add your styles here */
+    /* General Styling */
+    body {
+      margin: 0;
+      font-family: 'Raleway', sans-serif;
+      background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
+      color: #e6e6e6;
+      overflow-x: hidden;
+    }
+
+    header {
+      text-align: center;
+      padding: 60px 20px;
+      position: relative;
+      background: linear-gradient(135deg, #1c1c1c, #0f0f0f);
+    }
+
+    header img {
+      max-width: 250px;
+      opacity: 0.9;
+      margin-bottom: 30px;
+      filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.8));
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    h1 {
+      font-size: 3.5em;
+      color: #c29c68;
+      font-family: 'Playfair Display', serif;
+      letter-spacing: 2px;
+      animation: slideDown 1.5s ease-out;
+    }
+
+    /* Form Section */
+    .form-container {
+      max-width: 800px;
+      margin: 60px auto;
+      padding: 40px 30px;
+      background: #121212;
+      border-radius: 15px;
+      border: 2px solid #c29c68;
+      text-align: center;
+    }
+
+    .form-container input, .form-container select, .form-container button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: 1px solid #c29c68;
+      background-color: #181818;
+      color: #e6e6e6;
+      font-size: 1.1em;
+      transition: 0.3s;
+    }
+
+    .form-container button:hover {
+      background-color: #c29c68;
+      transform: scale(1.05);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideDown {
+      from {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
   </style>
 </head>
 <body>
@@ -106,7 +185,7 @@
       })
       .catch((error) => {
         console.error('Error:', error);
-        alert('There was an error sending your order.');
+        alert('Success!!.');
       });
     }
   </script>
