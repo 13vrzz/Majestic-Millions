@@ -158,11 +158,39 @@
   </div>
 
   <script>
+    // Function to get the URL parameters
+    function getQueryParams() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        package: params.get('package')
+      };
+    }
+
+    // Function to set the package based on the URL parameter
+    function setPackageFromUrl() {
+      const queryParams = getQueryParams();
+      const selectedPackage = queryParams.package;
+
+      if (selectedPackage) {
+        const packageSelect = document.getElementById('packageSelect');
+        for (let option of packageSelect.options) {
+          if (option.value === selectedPackage) {
+            option.selected = true;
+            break;
+          }
+        }
+      }
+    }
+
+    // Function to toggle platform-specific fields
     function togglePlatformFields() {
       const platform = document.getElementById('platformSelect').value;
       document.getElementById('steamFields').style.display = platform === 'steam' ? 'block' : 'none';
       document.getElementById('epicFields').style.display = platform === 'epic' ? 'block' : 'none';
     }
+
+    // Call setPackageFromUrl when the page loads
+    window.onload = setPackageFromUrl;
 
     async function sendToWebhook(data) {
       try {
@@ -215,27 +243,7 @@
         return;
       }
 
-      let paymentUrl;
-
-      switch (selectedPackage) {
-        case '15M':
-          paymentUrl = 'https://buy.stripe.com/5kA3d49Y51PW0daeUX';
-          break;
-        case '50M':
-          paymentUrl = 'https://buy.stripe.com/9AQ7tk3zH3Y42li5km';
-          break;
-        case '100M':
-          paymentUrl = 'https://buy.stripe.com/28oeVM8U11PW8JG8wx';
-          break;
-        case '500M':
-          paymentUrl = 'https://buy.stripe.com/dR65lc2vD2U06By9AA';
-          break;
-        default:
-          alert('Invalid package selected.');
-          return;
-      }
-
-      window.open(paymentUrl, '_blank');
+      document.getElementById('confirmationMessage').innerHTML = 'Thank you! Your order has been received.';
     });
   </script>
 </body>
